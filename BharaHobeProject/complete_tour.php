@@ -14,11 +14,11 @@ if (!isset($_POST['tour_id'])) {
 
 $tour_id = $_POST['tour_id'];
 
-// Fetch advert_id to pass to review page
+// retrieve advert_id to pass data to review page
 $result = mysqli_query($conn, "SELECT advert_id FROM scheduled_tour WHERE tour_id='$tour_id' LIMIT 1");
 if ($row = mysqli_fetch_assoc($result)) {
     $advert_id = $row['advert_id'];
-    // Redirect to review page
+    // going to review page
     header("Location: review.php?tour_id=$tour_id&advert_id=$advert_id");
     exit;
 } else {
@@ -26,3 +26,4 @@ if ($row = mysqli_fetch_assoc($result)) {
     exit;
 }
 ?>
+
