@@ -24,7 +24,6 @@ if (isset($_POST['tour_date']) && isset($_POST['tour_time'])) {
     if (mysqli_query($conn, $insert_tour_sql)) {
         $tour_id = mysqli_insert_id($conn);
 
-        // Add tenant_username to satisfy foreign key
         mysqli_query($conn, "INSERT INTO scheduled_tour (tour_id, advert_id, tenant_username) VALUES ('$tour_id', '$advert_id', '$username')");
 
         $user_event = "Scheduled Tour for Apartment #$advert_id";
@@ -99,3 +98,4 @@ if (isset($_POST['tour_date']) && isset($_POST['tour_time'])) {
 	</div>
 </body>
 </html>
+
