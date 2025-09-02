@@ -10,7 +10,7 @@ if (!isset($_SESSION['email'])) {
 $email = $_SESSION['email'];
 $logged_in = true;
 
-// Fetch user info
+// user info
 $sql = "SELECT username, email, date_of_birth, Phone_no, nid, ten_type, ren_flag FROM users WHERE email = '$email'";
 $result = mysqli_query($conn, $sql);
 if (mysqli_num_rows($result) == 0) {
@@ -20,7 +20,7 @@ if (mysqli_num_rows($result) == 0) {
 $user = mysqli_fetch_assoc($result);
 $username = $user['username'];
 
-// Update tenant type
+// update tenant type
 if (isset($_POST['ten_type'])) {
     $new_type = mysqli_real_escape_string($conn, $_POST['ten_type']);
     mysqli_query($conn, "UPDATE users SET ten_type='$new_type' WHERE username='$username'");
@@ -28,10 +28,10 @@ if (isset($_POST['ten_type'])) {
     exit;
 }
 
-// Fetch history
+// history
 $history_result = mysqli_query($conn, "SELECT * FROM history WHERE username='$username' ORDER BY date_time DESC");
 
-// --- Requests Made --- //
+// requests made by user //
 $rent_requests_made = mysqli_query($conn, "
     SELECT advert_id, status 
     FROM request_apply 
@@ -45,11 +45,11 @@ $tour_requests_made = mysqli_query($conn, "
     WHERE st.tenant_username='$username'
 ");
 
-// --- Requests Received (for renters) --- //
+// requests received by renter //
 $renter_requests = ['rental' => null, 'tour' => null];
 
 if ($user['ren_flag'] == 1) {
-    // Rental requests received
+    // rental requests received
     $renter_requests['rental'] = mysqli_query($conn, "
         SELECT ra.tenant_username, ra.advert_id, ra.status
         FROM request_apply ra
@@ -57,7 +57,7 @@ if ($user['ren_flag'] == 1) {
         WHERE a.renter_username = '$username' AND ra.status = 'Pending'
     ");
 
-    // Tour requests received
+    // tour requests received
     $renter_requests['tour'] = mysqli_query($conn, "
         SELECT st.tour_id, st.tenant_username, st.advert_id, t.status, t.renter_approved
         FROM scheduled_tour st
@@ -95,7 +95,7 @@ if ($user['ren_flag'] == 1) {
 
 <main class="profile-container">
 
-<!-- Left Column: Profile Info -->
+<!-- left -->
 <div class="profile-info">
     <h2>Profile Information</h2>
     <p><strong>Username:</strong> <?= htmlspecialchars($user['username']) ?></p>
@@ -114,7 +114,7 @@ if ($user['ren_flag'] == 1) {
     </form>
 </div>
 
-<!-- Central Column: History + Requests Made -->
+<!-- middle -->
 <div class="profile-history">
     <div class="history-section">
         <h2>History</h2>
@@ -145,7 +145,7 @@ if ($user['ren_flag'] == 1) {
             </thead>
             <tbody>
             <?php
-            // Rental requests made
+            // rental requests made
             while($r = mysqli_fetch_assoc($rent_requests_made)) {
                 echo "<tr>
                     <td>Rental</td>
@@ -155,7 +155,7 @@ if ($user['ren_flag'] == 1) {
                 </tr>";
             }
 
-            // Tour requests made (tenant)
+            // tour requests made (tenant)
             while($t = mysqli_fetch_assoc($tour_requests_made)) {
                 $action = ($t['status'] === 'Pending' && $t['renter_approved'] === 'Accepted') 
                     ? '<form method="POST" action="complete_tour.php">
@@ -176,12 +176,12 @@ if ($user['ren_flag'] == 1) {
     </div>
 </div>
 
-<!-- Right Column: Requests Received (Renter) -->
+<!-- right -->
 <div class="profile-info">
 <?php if($user['ren_flag'] == 1): ?>
     <h2>Requests Received</h2>
 
-    <!-- Rental Requests -->
+    <!-- rental requests -->
     <h3>Rental Requests</h3>
     <?php if($renter_requests['rental'] && mysqli_num_rows($renter_requests['rental']) > 0): ?>
         <?php while($r = mysqli_fetch_assoc($renter_requests['rental'])): ?>
@@ -199,7 +199,7 @@ if ($user['ren_flag'] == 1) {
         <p>No rental requests received.</p>
     <?php endif; ?>
 
-    <!-- Tour Requests -->
+    <!-- tour requests -->
     <h3>Tour Requests</h3>
     <?php if($renter_requests['tour'] && mysqli_num_rows($renter_requests['tour']) > 0): ?>
         <?php while($t = mysqli_fetch_assoc($renter_requests['tour'])): ?>
@@ -224,3 +224,4 @@ if ($user['ren_flag'] == 1) {
 </main>
 </body>
 </html>
+
